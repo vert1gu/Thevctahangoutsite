@@ -22,6 +22,16 @@ const windowsIsos = [
   { name: 'Windows 10 LTSC', url: 'https://buzzheavier.com/yhggy3l1e5oq', description: 'Stable, bloat-free Windows 10 enterprise.' },
 ];
 
+const crackedGames = [
+  { name: 'SteamRIP', url: 'https://steamrip.com/', description: 'Pre-installed Steam games for direct download.' },
+];
+
+const freeStreaming = [
+  { name: 'Flixmomo', url: 'https://flixmomo.tv/', description: 'Free movies and TV shows streaming.' },
+  { name: 'HiAnime', url: 'https://hianime.to/', description: 'Watch anime online for free in high quality.' },
+  { name: 'Anikai', url: 'https://anikai.to/', description: 'Ad-free anime streaming platform.' },
+];
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -41,7 +51,7 @@ const itemVariants = {
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'linux' | 'windows'>('linux');
+  const [activeTab, setActiveTab] = useState<'linux' | 'windows' | 'games' | 'streaming'>('linux');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const exploreRef = useRef<HTMLDivElement>(null);
 
@@ -143,7 +153,7 @@ export default function App() {
               <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Downloads & Resources</h2>
               
               {/* Pill Toggle */}
-              <div className="inline-flex p-1 bg-gray-100 dark:bg-[#050505] rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200">
+              <div className="inline-flex flex-wrap justify-center p-1 bg-gray-100 dark:bg-[#050505] rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1">
                 <button
                   onClick={() => setActiveTab('linux')}
                   className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
@@ -163,6 +173,26 @@ export default function App() {
                   }`}
                 >
                   Windows ISOs
+                </button>
+                <button
+                  onClick={() => setActiveTab('games')}
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    activeTab === 'games' 
+                      ? 'bg-indigo-600 text-white shadow-md' 
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }`}
+                >
+                  Cracked Games
+                </button>
+                <button
+                  onClick={() => setActiveTab('streaming')}
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                    activeTab === 'streaming' 
+                      ? 'bg-indigo-600 text-white shadow-md' 
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                  }`}
+                >
+                  Free Streaming
                 </button>
               </div>
             </div>
@@ -234,6 +264,74 @@ export default function App() {
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                           {iso.description}
+                        </p>
+                      </motion.a>
+                    ))}
+                  </motion.div>
+                )}
+
+                {activeTab === 'games' && (
+                  <motion.div
+                    key="games"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {crackedGames.map((game) => (
+                      <motion.a
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        key={game.name}
+                        href={game.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group p-5 rounded-2xl bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                            {game.name}
+                          </span>
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                          {game.description}
+                        </p>
+                      </motion.a>
+                    ))}
+                  </motion.div>
+                )}
+
+                {activeTab === 'streaming' && (
+                  <motion.div
+                    key="streaming"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+                  >
+                    {freeStreaming.map((site) => (
+                      <motion.a
+                        variants={itemVariants}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        key={site.name}
+                        href={site.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group p-5 rounded-2xl bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                            {site.name}
+                          </span>
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                        </div>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                          {site.description}
                         </p>
                       </motion.a>
                     ))}
