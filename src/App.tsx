@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Download, MessageSquare, Sun, Moon } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2 } from 'lucide-react';
 
 const linuxDistros = [
   { name: 'Void Linux', url: 'https://voidlinux.org/download/', description: 'Independent, rolling-release distro with runit init system.' },
@@ -53,6 +53,7 @@ const itemVariants = {
 export default function App() {
   const [activeTab, setActiveTab] = useState<'linux' | 'windows' | 'games' | 'streaming'>('linux');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [mcFont, setMcFont] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,6 +63,14 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  useEffect(() => {
+    if (mcFont) {
+      document.documentElement.classList.add('mc-font');
+    } else {
+      document.documentElement.classList.remove('mc-font');
+    }
+  }, [mcFont]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -78,6 +87,14 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white">VCTA Hangout</div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setMcFont(!mcFont)}
+              className={`p-2 transition-colors rounded-full ${mcFont ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
+              aria-label="Toggle Minecraft Font"
+              title="Toggle Minecraft Font"
+            >
+              <Gamepad2 className="w-5 h-5" />
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/5"
