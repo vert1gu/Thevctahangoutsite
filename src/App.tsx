@@ -35,7 +35,7 @@ export default function App() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-display font-bold text-xl tracking-tight">Community</div>
+          <div className="font-display font-bold text-xl tracking-tight">VCTA Hangout</div>
           <div className="flex items-center gap-4">
             <a 
               href="https://discord.gg/x7a7WcPx6j" 
@@ -67,7 +67,7 @@ export default function App() {
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
             Welcome to the <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
-              Community
+              VCTA Hangout
             </span>
           </h1>
           
@@ -204,7 +204,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="py-8 text-center border-t border-white/5 text-gray-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} Community. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} VCTA Hangout. All rights reserved.</p>
       </footer>
     </div>
   );
