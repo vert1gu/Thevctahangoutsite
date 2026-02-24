@@ -113,7 +113,7 @@ export default function App() {
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 tank:bg-[#11140d]/90 tank:border-[#3a5a40]/50 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd]">VCTA Hangout</div>
+          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd]">VCTA's Site</div>
           <div className="flex items-center gap-4">
             <div className="relative group flex items-center justify-center">
               <button
@@ -180,14 +180,14 @@ export default function App() {
           </div>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight text-gray-900 dark:text-white transition-colors duration-200">
-            Welcome to the <br />
+            Welcome to <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400 mc:from-green-400 mc:to-emerald-500 tank:from-[#a3b18a] tank:to-[#dad7cd] tank:uppercase tank:tracking-wider">
-              VCTA Hangout
+              VCTA's Site
             </span>
           </h1>
           
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
-            The ultimate community for everything tech, hanging out, and everything in between.
+            VCTA's Site for everything, discord, resources, cool modes and everything
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -415,9 +415,39 @@ export default function App() {
         </div>
       </section>
 
+      {/* Support Section */}
+      <section className="py-24 px-6 relative">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none tank:bg-[#11140d]/90 tank:backdrop-blur-lg tank:border-2 tank:border-[#3a5a40] tank:rounded-sm rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 transition-colors duration-200">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] mb-8 text-center">Contact Support</h2>
+            <form action="https://formsubmit.co/alphakoko23@gmail.com" method="POST" className="flex flex-col gap-5">
+              <input type="hidden" name="_subject" value="New Support Request from VCTA's Site!" />
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_template" value="table" />
+              
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Name</label>
+                <input type="text" name="name" id="name" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all" placeholder="Your Name" />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Email</label>
+                <input type="email" name="email" id="email" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all" placeholder="your@email.com" />
+              </div>
+              <div>
+                <label htmlFor="problem" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Problem</label>
+                <textarea name="problem" id="problem" required rows={4} className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all resize-none" placeholder="Describe your problem here..."></textarea>
+              </div>
+              <button type="submit" className="mt-4 w-full py-4 rounded-xl mc:rounded-none tank:rounded-sm bg-indigo-600 hover:bg-indigo-500 mc:bg-green-600 mc:hover:bg-green-500 tank:bg-[#3a5a40] tank:hover:bg-[#588157] text-white font-medium transition-all shadow-md tank:uppercase tank:tracking-wider">
+                Send Support Request
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 text-center border-t border-gray-200 dark:border-white/5 text-gray-500 text-sm transition-colors duration-200">
-        <p>&copy; {new Date().getFullYear()} VCTA Hangout. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} VCTA's Site. All rights reserved.</p>
       </footer>
     </div>
   );
