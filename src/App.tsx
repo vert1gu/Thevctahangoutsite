@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap, Check } from 'lucide-react';
 
 const linuxDistros = [
   { name: 'Void Linux', url: 'https://voidlinux.org/download/', description: 'Independent, rolling-release distro with runit init system.' },
@@ -167,41 +167,85 @@ export default function App() {
             <div className="relative group flex items-center justify-center">
               <button
                 onClick={() => setIsModeMenuOpen(!isModeMenuOpen)}
-                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : 'text-gray-500 dark:text-gray-400'}`}
+                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : 'text-gray-500 dark:text-gray-400'} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500`}
                 aria-label="Select Mode"
+                aria-expanded={isModeMenuOpen}
+                aria-haspopup="menu"
+                aria-controls="mode-menu"
               >
-                {appMode === 'default' && <Monitor className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
-                {appMode === 'mc' && <Gamepad2 className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />}
-                {appMode === 'tank' && <Shield className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
-                {appMode === 'vertigo' && <Zap className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
+                {appMode === 'default' && <Monitor className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'mc' && <Gamepad2 className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" aria-hidden="true" />}
+                {appMode === 'tank' && <Shield className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'vertigo' && <Zap className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
               </button>
               
-              {isModeMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50">
-                  <button onClick={() => handleModeChange('default')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
-                    <Monitor className="w-4 h-4" /> Default
-                  </button>
-                  <button onClick={() => handleModeChange('mc')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
-                    <Gamepad2 className="w-4 h-4" /> MC Mode
-                  </button>
-                  <button onClick={() => handleModeChange('tank')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
-                    <Shield className="w-4 h-4" /> Tank Mode
-                  </button>
-                  <button onClick={() => handleModeChange('vertigo')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
-                    <Zap className="w-4 h-4" /> Vertigo Mode
-                  </button>
-                </div>
-              )}
+              <AnimatePresence>
+                {isModeMenuOpen && (
+                  <motion.div 
+                    id="mode-menu"
+                    role="menu"
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 p-1"
+                  >
+                    <button 
+                      onClick={() => handleModeChange('default')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'default' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Monitor className="w-4 h-4" aria-hidden="true" /> Default
+                      </div>
+                      {appMode === 'default' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('mc')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'mc' ? 'bg-green-900/40 text-green-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 mc:hover:bg-green-900/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Gamepad2 className="w-4 h-4" aria-hidden="true" /> MC Mode
+                      </div>
+                      {appMode === 'mc' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('tank')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'tank' ? 'bg-[#3a5a40]/40 text-[#dad7cd]' : 'hover:bg-gray-50 dark:hover:bg-white/5 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4" aria-hidden="true" /> Tank Mode
+                      </div>
+                      {appMode === 'tank' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('vertigo')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'vertigo' ? 'bg-cyan-900/40 text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4" aria-hidden="true" /> Vertigo Mode
+                      </div>
+                      {appMode === 'vertigo' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
             <div className={`relative group flex items-center justify-center ${appMode !== 'default' ? 'hidden' : ''}`}>
               <button
                 onClick={toggleTheme}
-                className="p-2 transition-colors rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
+                className="p-2 transition-colors rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                 aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                {theme === 'dark' ? <Sun className="w-5 h-5 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-110" /> : <Moon className="w-5 h-5 transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110" />}
+                {theme === 'dark' ? <Sun className="w-5 h-5 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-110" aria-hidden="true" /> : <Moon className="w-5 h-5 transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110" aria-hidden="true" />}
               </button>
-              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
+              <div 
+                className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg"
+                role="tooltip"
+              >
                 {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               </div>
             </div>
@@ -274,7 +318,11 @@ export default function App() {
               <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd]">Downloads & Resources</h2>
               
               {/* Pill Toggle */}
-              <div className="inline-flex flex-wrap justify-center p-1.5 bg-gray-100 dark:bg-[#050505] mc:bg-black/40 mc:border-white/10 mc:rounded-none tank:bg-[#1a2315] tank:border-[#3a5a40] tank:rounded-sm rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1 relative">
+              <div 
+                className="inline-flex flex-wrap justify-center p-1.5 bg-gray-100 dark:bg-[#050505] mc:bg-black/40 mc:border-white/10 mc:rounded-none tank:bg-[#1a2315] tank:border-[#3a5a40] tank:rounded-sm rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1 relative"
+                role="tablist"
+                aria-label="Resource Categories"
+              >
                 {[
                   { id: 'linux', label: 'Linux Distros' },
                   { id: 'windows', label: 'Windows ISOs' },
@@ -284,7 +332,12 @@ export default function App() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`relative px-6 py-2.5 rounded-full mc:rounded-none tank:rounded-sm tank:uppercase tank:tracking-wider text-sm font-medium transition-colors duration-200 z-10 ${
+                    role="tab"
+                    aria-selected={activeTab === tab.id}
+                    aria-controls={`panel-${tab.id}`}
+                    id={`tab-${tab.id}`}
+                    tabIndex={activeTab === tab.id ? 0 : -1}
+                    className={`relative px-6 py-2.5 rounded-full mc:rounded-none tank:rounded-sm tank:uppercase tank:tracking-wider text-sm font-medium transition-colors duration-200 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${
                       activeTab === tab.id 
                         ? 'text-white tank:text-[#11140d]' 
                         : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-white/5 mc:hover:bg-white/10 tank:hover:bg-[#3a5a40]/40 tank:text-[#8a9a70]'
@@ -321,6 +374,9 @@ export default function App() {
                 ) : activeTab === 'linux' ? (
                   <motion.div
                     key="linux"
+                    id="panel-linux"
+                    role="tabpanel"
+                    aria-labelledby="tab-linux"
                     variants={containerVariants}
                     initial="hidden"
                     animate="show"
@@ -353,6 +409,9 @@ export default function App() {
                 ) : activeTab === 'windows' ? (
                   <motion.div
                     key="windows"
+                    id="panel-windows"
+                    role="tabpanel"
+                    aria-labelledby="tab-windows"
                     variants={containerVariants}
                     initial="hidden"
                     animate="show"
@@ -385,6 +444,9 @@ export default function App() {
                 ) : activeTab === 'games' ? (
                   <motion.div
                     key="games"
+                    id="panel-games"
+                    role="tabpanel"
+                    aria-labelledby="tab-games"
                     variants={containerVariants}
                     initial="hidden"
                     animate="show"
@@ -417,6 +479,9 @@ export default function App() {
                 ) : (
                   <motion.div
                     key="streaming"
+                    id="panel-streaming"
+                    role="tabpanel"
+                    aria-labelledby="tab-streaming"
                     variants={containerVariants}
                     initial="hidden"
                     animate="show"
@@ -500,8 +565,33 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center border-t border-gray-200 dark:border-white/5 text-gray-500 text-sm transition-colors duration-200">
-        <p>&copy; {new Date().getFullYear()} VCTA's Site. All rights reserved.</p>
+      <footer className="py-12 border-t border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40]/50 vertigo:border-white/10 bg-white/50 dark:bg-[#050505]/50 mc:bg-black/60 tank:bg-[#11140d]/80 vertigo:bg-white/5 backdrop-blur-md transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl bg-indigo-600 dark:bg-indigo-500 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 mc:shadow-green-500/20 tank:shadow-[#3a5a40]/20 vertigo:shadow-cyan-500/20">
+              <span className="font-display font-bold text-white text-xl tracking-tighter">V</span>
+            </div>
+            <span className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium">VCTA's Site</span>
+          </div>
+          <p className="text-gray-500 dark:text-gray-400 mc:text-green-500/70 tank:text-[#a3b18a]/70 vertigo:text-cyan-100/50 text-sm text-center max-w-md">
+            The ultimate community for everything tech, hanging out, and everything in between.
+          </p>
+          <div className="flex items-center gap-4 mt-2">
+            <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+              <Github className="w-5 h-5" />
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+              <Youtube className="w-5 h-5" />
+            </a>
+            <a href="https://discord.gg/x7a7WcPx6j" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+              <MessageSquare className="w-5 h-5" />
+            </a>
+          </div>
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 mc:via-green-500/20 tank:via-[#3a5a40]/50 vertigo:via-cyan-500/20 to-transparent my-2" />
+          <p className="text-gray-400 dark:text-gray-500 mc:text-green-600/50 tank:text-[#588157]/70 vertigo:text-cyan-500/40 text-xs">
+            &copy; {new Date().getFullYear()} VCTA's Site. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
   );
