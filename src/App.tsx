@@ -137,7 +137,7 @@ export default function App() {
           </h1>
           
           <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
-            A place for tech enthusiasts to connect, share knowledge, and discover the best tools, distros, and resources.
+            The ultimate community for everything tech, hanging out, and everything in between.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
