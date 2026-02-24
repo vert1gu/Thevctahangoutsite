@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap } from 'lucide-react';
 
 const linuxDistros = [
   { name: 'Void Linux', url: 'https://voidlinux.org/download/', description: 'Independent, rolling-release distro with runit init system.' },
@@ -44,21 +44,21 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const getItemVariants = (mode: string) => ({
   hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
+  show: { opacity: 1, y: 0, transition: mode === 'vertigo' ? { duration: 0.5, ease: [0.05, 0.9, 0.1, 1.05] } : { type: "spring", stiffness: 300, damping: 24 } },
   exit: { opacity: 0, y: -15, transition: { duration: 0.2 } }
-};
+});
 
 const SkeletonCard = () => (
-  <div className="p-5 rounded-2xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] flex flex-col gap-3 animate-pulse">
+  <div className="p-5 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] vertigo:bg-white/5 border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] vertigo:border-white/10 vertigo:backdrop-blur-xl flex flex-col gap-3 animate-pulse">
     <div className="flex items-center justify-between w-full">
-      <div className="h-5 w-32 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] rounded-md mc:rounded-none tank:rounded-sm" />
-      <div className="h-4 w-4 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] rounded-full mc:rounded-none tank:rounded-sm" />
+      <div className="h-5 w-32 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
+      <div className="h-4 w-4 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-full" />
     </div>
     <div className="space-y-2">
-      <div className="h-3 w-full bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] rounded-md mc:rounded-none tank:rounded-sm" />
-      <div className="h-3 w-2/3 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] rounded-md mc:rounded-none tank:rounded-sm" />
+      <div className="h-3 w-full bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
+      <div className="h-3 w-2/3 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
     </div>
   </div>
 );
@@ -73,11 +73,46 @@ const SkeletonGrid = () => (
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'linux' | 'windows' | 'games' | 'streaming'>('linux');
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank'>('default');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark';
+    }
+    return 'dark';
+  });
+  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank' | 'vertigo'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('appMode') as any) || 'default';
+    }
+    return 'default';
+  });
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
+
+  const handleModeChange = (newMode: 'default' | 'mc' | 'tank' | 'vertigo') => {
+    if (newMode === appMode) {
+      setIsModeMenuOpen(false);
+      return;
+    }
+    setIsTransitioning(true);
+    setIsModeMenuOpen(false);
+    
+    setTimeout(() => {
+      setAppMode(newMode);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
+    }, 400);
+  };
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('appMode', appMode);
+  }, [appMode]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -86,11 +121,13 @@ export default function App() {
   }, [activeTab]);
 
   useEffect(() => {
-    document.documentElement.classList.remove('mc-mode', 'tank-mode');
+    document.documentElement.classList.remove('mc-mode', 'tank-mode', 'vertigo-mode');
     if (appMode === 'mc') {
       document.documentElement.classList.add('mc-mode', 'dark');
     } else if (appMode === 'tank') {
       document.documentElement.classList.add('tank-mode', 'dark');
+    } else if (appMode === 'vertigo') {
+      document.documentElement.classList.add('vertigo-mode', 'dark');
     } else {
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -110,32 +147,48 @@ export default function App() {
 
   return (
     <div className="min-h-screen selection:bg-indigo-500/30">
+      <AnimatePresence>
+        {isTransitioning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] bg-[#050505] pointer-events-none"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 tank:bg-[#11140d]/90 tank:border-[#3a5a40]/50 backdrop-blur-md transition-colors duration-200">
+      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 tank:bg-[#11140d]/90 tank:border-[#3a5a40]/50 vertigo:bg-white/5 vertigo:backdrop-blur-2xl vertigo:border-white/10 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd]">VCTA's Site</div>
+          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium">VCTA's Site</div>
           <div className="flex items-center gap-4">
             <div className="relative group flex items-center justify-center">
               <button
                 onClick={() => setIsModeMenuOpen(!isModeMenuOpen)}
-                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm ${appMode !== 'default' ? 'bg-black/40 border' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : 'text-gray-500 dark:text-gray-400'}`}
+                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : 'text-gray-500 dark:text-gray-400'}`}
                 aria-label="Select Mode"
               >
-                {appMode === 'default' && <Monitor className="w-5 h-5" />}
-                {appMode === 'mc' && <Gamepad2 className="w-5 h-5" />}
-                {appMode === 'tank' && <Shield className="w-5 h-5" />}
+                {appMode === 'default' && <Monitor className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
+                {appMode === 'mc' && <Gamepad2 className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" />}
+                {appMode === 'tank' && <Shield className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
+                {appMode === 'vertigo' && <Zap className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />}
               </button>
               
               {isModeMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-40 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm shadow-xl overflow-hidden flex flex-col z-50">
-                  <button onClick={() => { setAppMode('default'); setIsModeMenuOpen(false); }} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] flex items-center gap-2">
+                <div className="absolute top-full right-0 mt-2 w-40 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50">
+                  <button onClick={() => handleModeChange('default')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
                     <Monitor className="w-4 h-4" /> Default
                   </button>
-                  <button onClick={() => { setAppMode('mc'); setIsModeMenuOpen(false); }} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] flex items-center gap-2">
+                  <button onClick={() => handleModeChange('mc')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
                     <Gamepad2 className="w-4 h-4" /> MC Mode
                   </button>
-                  <button onClick={() => { setAppMode('tank'); setIsModeMenuOpen(false); }} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] flex items-center gap-2">
+                  <button onClick={() => handleModeChange('tank')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
                     <Shield className="w-4 h-4" /> Tank Mode
+                  </button>
+                  <button onClick={() => handleModeChange('vertigo')} className="px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 flex items-center gap-2">
+                    <Zap className="w-4 h-4" /> Vertigo Mode
                   </button>
                 </div>
               )}
@@ -146,7 +199,7 @@ export default function App() {
                 className="p-2 transition-colors rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5"
                 aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                {theme === 'dark' ? <Sun className="w-5 h-5 transition-transform duration-200 group-hover:rotate-45 group-hover:scale-110" /> : <Moon className="w-5 h-5 transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110" />}
               </button>
               <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
                 {theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -156,8 +209,9 @@ export default function App() {
               href="https://discord.gg/x7a7WcPx6j" 
               target="_blank" 
               rel="noreferrer"
-              className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              className="group flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
             >
+              <MessageSquare className="w-4 h-4 transition-transform duration-200 group-hover:scale-110 group-hover:-translate-y-0.5" />
               Join Discord
             </a>
           </div>
@@ -275,22 +329,22 @@ export default function App() {
                   >
                     {linuxDistros.map((distro) => (
                       <motion.a
-                        variants={itemVariants}
+                        variants={getItemVariants(appMode)}
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         key={distro.name}
                         href={distro.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
                             {distro.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] leading-relaxed">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
                           {distro.description}
                         </p>
                       </motion.a>
@@ -307,22 +361,22 @@ export default function App() {
                   >
                     {windowsIsos.map((iso) => (
                       <motion.a
-                        variants={itemVariants}
+                        variants={getItemVariants(appMode)}
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         key={iso.name}
                         href={iso.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
                             {iso.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] leading-relaxed">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
                           {iso.description}
                         </p>
                       </motion.a>
@@ -339,22 +393,22 @@ export default function App() {
                   >
                     {crackedGames.map((game) => (
                       <motion.a
-                        variants={itemVariants}
+                        variants={getItemVariants(appMode)}
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         key={game.name}
                         href={game.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
                             {game.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] leading-relaxed">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
                           {game.description}
                         </p>
                       </motion.a>
@@ -371,22 +425,22 @@ export default function App() {
                   >
                     {freeStreaming.map((site) => (
                       <motion.a
-                        variants={itemVariants}
+                        variants={getItemVariants(appMode)}
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
                         key={site.name}
                         href={site.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
                             {site.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] leading-relaxed">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
                           {site.description}
                         </p>
                       </motion.a>

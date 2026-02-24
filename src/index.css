@@ -4,6 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant mc (&:where(.mc-mode, .mc-mode *));
 @custom-variant tank (&:where(.tank-mode, .tank-mode *));
+@custom-variant vertigo (&:where(.vertigo-mode, .vertigo-mode *));
 
 :root {
   --font-display-custom: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
@@ -18,6 +19,11 @@
 .tank-mode {
   --font-display-custom: "Rajdhani", ui-sans-serif, system-ui, sans-serif;
   --font-sans-custom: "Rajdhani", ui-sans-serif, system-ui, sans-serif;
+}
+
+.vertigo-mode {
+  --font-display-custom: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans-custom: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @theme {
@@ -48,4 +54,12 @@ body {
   background-position: center;
   background-attachment: fixed;
   background-color: #11140d;
+}
+
+.vertigo-mode body {
+  background-image: linear-gradient(135deg, #020617 0%, #1e1b4b 50%, #000000 100%);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: #020617;
 }
