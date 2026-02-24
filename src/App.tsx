@@ -50,11 +50,39 @@ const itemVariants = {
   exit: { opacity: 0, y: -15, transition: { duration: 0.2 } }
 };
 
+const SkeletonCard = () => (
+  <div className="p-5 rounded-2xl mc:rounded-none bg-gray-50 dark:bg-[#161618] mc:bg-black/40 border border-gray-200 dark:border-white/5 mc:border-white/20 flex flex-col gap-3 animate-pulse">
+    <div className="flex items-center justify-between w-full">
+      <div className="h-5 w-32 bg-gray-200 dark:bg-white/10 mc:bg-white/20 rounded-md mc:rounded-none" />
+      <div className="h-4 w-4 bg-gray-200 dark:bg-white/10 mc:bg-white/20 rounded-full mc:rounded-none" />
+    </div>
+    <div className="space-y-2">
+      <div className="h-3 w-full bg-gray-200 dark:bg-white/10 mc:bg-white/20 rounded-md mc:rounded-none" />
+      <div className="h-3 w-2/3 bg-gray-200 dark:bg-white/10 mc:bg-white/20 rounded-md mc:rounded-none" />
+    </div>
+  </div>
+);
+
+const SkeletonGrid = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {[...Array(6)].map((_, i) => (
+      <SkeletonCard key={i} />
+    ))}
+  </div>
+);
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<'linux' | 'windows' | 'games' | 'streaming'>('linux');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [mcFont, setMcFont] = useState(false);
+  const [mcMode, setMcMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -65,12 +93,16 @@ export default function App() {
   }, [theme]);
 
   useEffect(() => {
-    if (mcFont) {
-      document.documentElement.classList.add('mc-font');
+    if (mcMode) {
+      document.documentElement.classList.add('mc-mode');
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.remove('mc-font');
+      document.documentElement.classList.remove('mc-mode');
+      if (theme !== 'dark') {
+        document.documentElement.classList.remove('dark');
+      }
     }
-  }, [mcFont]);
+  }, [mcMode, theme]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -83,21 +115,21 @@ export default function App() {
   return (
     <div className="min-h-screen selection:bg-indigo-500/30">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-md transition-colors duration-200">
+      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white">VCTA Hangout</div>
+          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl">VCTA Hangout</div>
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setMcFont(!mcFont)}
-              className={`p-2 transition-colors rounded-full ${mcFont ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
-              aria-label="Toggle Minecraft Font"
-              title="Toggle Minecraft Font"
+              onClick={() => setMcMode(!mcMode)}
+              className={`p-2 transition-colors rounded-full mc:rounded-none ${mcMode ? 'text-green-400 bg-black/40 border border-green-500/30' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
+              aria-label="Toggle Minecraft Mode"
+              title="Toggle Minecraft Mode"
             >
               <Gamepad2 className="w-5 h-5" />
             </button>
             <button
               onClick={toggleTheme}
-              className="p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/5"
+              className={`p-2 transition-colors rounded-full mc:rounded-none mc:bg-black/40 mc:border mc:border-white/10 mc:text-white ${mcMode ? 'hidden' : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'}`}
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -116,27 +148,27 @@ export default function App() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 min-h-[80vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.15)_0%,transparent_50%)] pointer-events-none transition-colors duration-200" />
+        <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.15)_0%,transparent_50%)] mc:hidden pointer-events-none transition-colors duration-200" />
         
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto relative z-10"
+          className="text-center max-w-3xl mx-auto relative z-10 mc:bg-black/40 mc:p-8 mc:border mc:border-white/10 mc:backdrop-blur-sm"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-white/5 border border-indigo-100 dark:border-white/10 text-sm font-medium mb-8 text-indigo-600 dark:text-indigo-300 transition-colors duration-200">
-            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mc:rounded-none mc:bg-black/60 mc:border-green-500/50 mc:text-green-400 bg-indigo-50 dark:bg-white/5 border border-indigo-100 dark:border-white/10 text-sm font-medium mb-8 text-indigo-600 dark:text-indigo-300 transition-colors duration-200">
+            <span className="w-2 h-2 rounded-full mc:rounded-none mc:bg-green-500 bg-indigo-500 animate-pulse" />
             Tech, Community & Hangout
           </div>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight text-gray-900 dark:text-white transition-colors duration-200">
             Welcome to the <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400 mc:from-green-400 mc:to-emerald-500">
               VCTA Hangout
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mc:text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
             The ultimate community for everything tech, hanging out, and everything in between.
           </p>
           
@@ -145,14 +177,14 @@ export default function App() {
               href="https://discord.gg/x7a7WcPx6j" 
               target="_blank" 
               rel="noreferrer"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_-5px_rgba(79,70,229,0.4)]"
+              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-green-600 mc:hover:bg-green-500 mc:shadow-none bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_-5px_rgba(79,70,229,0.4)]"
             >
               <MessageSquare className="w-5 h-5" />
               Join Discord
             </a>
             <button 
               onClick={scrollToExplore}
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-black/60 mc:border-white/20 mc:hover:bg-black/80 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium transition-all flex items-center justify-center gap-2"
             >
               Explore Resources
               <ChevronRight className="w-5 h-5" />
@@ -164,53 +196,38 @@ export default function App() {
       {/* Explore Section */}
       <section ref={exploreRef} className="py-24 px-6 relative">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white dark:bg-[#0f0f11] rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 transition-colors duration-200">
+          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 transition-colors duration-200">
             {/* Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
               <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Downloads & Resources</h2>
               
               {/* Pill Toggle */}
-              <div className="inline-flex flex-wrap justify-center p-1 bg-gray-100 dark:bg-[#050505] rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1">
-                <button
-                  onClick={() => setActiveTab('linux')}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    activeTab === 'linux' 
-                      ? 'bg-indigo-600 text-white shadow-md' 
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Linux Distros
-                </button>
-                <button
-                  onClick={() => setActiveTab('windows')}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    activeTab === 'windows' 
-                      ? 'bg-indigo-600 text-white shadow-md' 
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Windows ISOs
-                </button>
-                <button
-                  onClick={() => setActiveTab('games')}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    activeTab === 'games' 
-                      ? 'bg-indigo-600 text-white shadow-md' 
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Cracked Games
-                </button>
-                <button
-                  onClick={() => setActiveTab('streaming')}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                    activeTab === 'streaming' 
-                      ? 'bg-indigo-600 text-white shadow-md' 
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
-                >
-                  Free Streaming
-                </button>
+              <div className="inline-flex flex-wrap justify-center p-1.5 bg-gray-100 dark:bg-[#050505] mc:bg-black/40 mc:border-white/10 mc:rounded-none rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1 relative">
+                {[
+                  { id: 'linux', label: 'Linux Distros' },
+                  { id: 'windows', label: 'Windows ISOs' },
+                  { id: 'games', label: 'Cracked Games' },
+                  { id: 'streaming', label: 'Free Streaming' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`relative px-6 py-2.5 rounded-full mc:rounded-none text-sm font-medium transition-colors duration-200 z-10 ${
+                      activeTab === tab.id 
+                        ? 'text-white' 
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-white/5 mc:hover:bg-white/10'
+                    }`}
+                  >
+                    {activeTab === tab.id && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-indigo-600 mc:bg-green-600 rounded-full mc:rounded-none shadow-md -z-10"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -219,7 +236,17 @@ export default function App() {
             {/* Content */}
             <motion.div layout className="min-h-[300px]">
               <AnimatePresence mode="wait">
-                {activeTab === 'linux' && (
+                {isLoading ? (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <SkeletonGrid />
+                  </motion.div>
+                ) : activeTab === 'linux' ? (
                   <motion.div
                     key="linux"
                     variants={containerVariants}
@@ -251,9 +278,7 @@ export default function App() {
                       </motion.a>
                     ))}
                   </motion.div>
-                )}
-
-                {activeTab === 'windows' && (
+                ) : activeTab === 'windows' ? (
                   <motion.div
                     key="windows"
                     variants={containerVariants}
@@ -285,9 +310,7 @@ export default function App() {
                       </motion.a>
                     ))}
                   </motion.div>
-                )}
-
-                {activeTab === 'games' && (
+                ) : activeTab === 'games' ? (
                   <motion.div
                     key="games"
                     variants={containerVariants}
@@ -319,9 +342,7 @@ export default function App() {
                       </motion.a>
                     ))}
                   </motion.div>
-                )}
-
-                {activeTab === 'streaming' && (
+                ) : (
                   <motion.div
                     key="streaming"
                     variants={containerVariants}
