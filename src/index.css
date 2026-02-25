@@ -11,6 +11,7 @@
 @custom-variant linux (&:where(.linux-mode, .linux-mode *));
 @custom-variant cyberpunk (&:where(.cyberpunk-mode, .cyberpunk-mode *));
 @custom-variant retro (&:where(.retro-mode, .retro-mode *));
+@custom-variant error404 (&:where(.error404-mode, .error404-mode *));
 
 :root {
   --font-display-custom: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
@@ -60,6 +61,11 @@
 .retro-mode {
   --font-display-custom: "Press Start 2P", ui-monospace, SFMono-Regular, monospace;
   --font-sans-custom: "VT323", ui-monospace, SFMono-Regular, monospace;
+}
+
+.error404-mode {
+  --font-display-custom: "Fira Code", ui-monospace, SFMono-Regular, monospace;
+  --font-sans-custom: "Fira Code", ui-monospace, SFMono-Regular, monospace;
 }
 
 @theme {
@@ -133,4 +139,10 @@ body {
   background-size: cover;
   background-attachment: fixed;
   text-shadow: 1px 1px 0 rgba(255,0,255,0.5), -1px -1px 0 rgba(0,255,255,0.5);
+}
+
+.error404-mode body {
+  background-color: #000000;
+  background-image: radial-gradient(circle at center, #1a0000 0%, #000000 100%);
+  color: #ff0000;
 }

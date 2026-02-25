@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap, Check, Laptop, Sparkles, Menu, Cpu, Tv } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap, Check, Laptop, Sparkles, Menu, Cpu, Tv, AlertTriangle } from 'lucide-react';
 
 const linuxDistros = [
   { name: 'Void Linux', url: 'https://voidlinux.org/download/', description: 'Independent, rolling-release distro with runit init system.' },
@@ -43,6 +43,7 @@ const coolModesList = [
   { id: 'linux', name: 'Linux', icon: Terminal, color: 'text-green-600 dark:text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/20', desc: 'Pure terminal hacker experience.' },
   { id: 'cyberpunk', name: 'Cyberpunk', icon: Cpu, color: 'text-fuchsia-500 dark:text-fuchsia-400', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/20', desc: 'Neon lights, dark streets, high tech.' },
   { id: 'retro', name: 'Retro VHS', icon: Tv, color: 'text-purple-500 dark:text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', desc: 'Scanlines, static, and 80s nostalgia.' },
+  { id: 'error404', name: 'Error 404', icon: AlertTriangle, color: 'text-red-500 dark:text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20', desc: 'System failure. Reality not found.' },
 ];
 
 const containerVariants = {
@@ -57,10 +58,10 @@ const containerVariants = {
   }
 };
 
-const cardClasses = "group p-5 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none border bg-gray-50 dark:bg-[#161618] border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 lemon:rounded-xl lemon:bg-yellow-100/80 lemon:border-yellow-300 lemon:hover:border-yellow-500 lemon:hover:bg-yellow-200/80 burger:rounded-lg burger:bg-amber-50/80 burger:border-amber-200 burger:hover:border-amber-400 burger:hover:bg-amber-100/80 thinkpad:rounded-none thinkpad:bg-[#111] thinkpad:border-red-900/30 thinkpad:hover:border-red-600 thinkpad:hover:bg-[#1a1a1a] linux:rounded-none linux:bg-[#0c0c0c] linux:border-green-900/30 linux:hover:border-green-500 linux:hover:bg-[#111] cyberpunk:rounded-none cyberpunk:bg-[#0d0221]/80 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:border-fuchsia-500 cyberpunk:hover:bg-[#1a0533]/80 cyberpunk:backdrop-blur-sm retro:rounded-none retro:bg-[#2b2b40]/80 retro:border-purple-900/50 retro:hover:border-purple-500 retro:hover:bg-[#363650]/80 retro:backdrop-blur-sm";
-const cardTitleClasses = "font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:text-gray-300 thinkpad:group-hover:text-red-500 linux:text-gray-300 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-200 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-200 retro:group-hover:text-purple-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors";
-const cardIconClasses = "w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:group-hover:text-red-500 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-700 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-600 retro:group-hover:text-purple-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors";
-const cardDescClasses = "text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 lemon:text-yellow-800 burger:text-amber-800 thinkpad:text-gray-500 linux:text-gray-500 cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70 leading-relaxed";
+const cardClasses = "group p-5 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none border bg-gray-50 dark:bg-[#161618] border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 lemon:rounded-xl lemon:bg-yellow-100/80 lemon:border-yellow-300 lemon:hover:border-yellow-500 lemon:hover:bg-yellow-200/80 burger:rounded-lg burger:bg-amber-50/80 burger:border-amber-200 burger:hover:border-amber-400 burger:hover:bg-amber-100/80 thinkpad:rounded-none thinkpad:bg-[#111] thinkpad:border-red-900/30 thinkpad:hover:border-red-600 thinkpad:hover:bg-[#1a1a1a] linux:rounded-none linux:bg-[#0c0c0c] linux:border-green-900/30 linux:hover:border-green-500 linux:hover:bg-[#111] cyberpunk:rounded-none cyberpunk:bg-[#0d0221]/80 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:border-fuchsia-500 cyberpunk:hover:bg-[#1a0533]/80 cyberpunk:backdrop-blur-sm retro:rounded-none retro:bg-[#2b2b40]/80 retro:border-purple-900/50 retro:hover:border-purple-500 retro:hover:bg-[#363650]/80 retro:backdrop-blur-sm error404:rounded-none error404:bg-black error404:border-red-900/50 error404:hover:border-red-500 error404:hover:bg-red-900/10";
+const cardTitleClasses = "font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:text-gray-300 thinkpad:group-hover:text-red-500 linux:text-gray-300 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-200 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-200 retro:group-hover:text-purple-400 error404:text-red-500 error404:group-hover:text-red-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors";
+const cardIconClasses = "w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:group-hover:text-red-500 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-700 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-600 retro:group-hover:text-purple-400 error404:text-red-700 error404:group-hover:text-red-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors";
+const cardDescClasses = "text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 lemon:text-yellow-800 burger:text-amber-800 thinkpad:text-gray-500 linux:text-gray-500 cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70 error404:text-red-500/70 leading-relaxed";
 
 const getItemVariants = (mode: string) => ({
   hidden: { 
@@ -113,7 +114,7 @@ export default function App() {
     }
     return 'dark';
   });
-  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro'>(() => {
+  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro' | 'error404'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('appMode') as any) || 'default';
     }
@@ -124,7 +125,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
 
-  const handleModeChange = (newMode: 'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro') => {
+  const handleModeChange = (newMode: 'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro' | 'error404') => {
     if (newMode === appMode) {
       setIsModeMenuOpen(false);
       return;
@@ -156,7 +157,7 @@ export default function App() {
   }, [activeTab]);
 
   useEffect(() => {
-    document.documentElement.classList.remove('mc-mode', 'tank-mode', 'vertigo-mode', 'lemon-mode', 'burger-mode', 'thinkpad-mode', 'linux-mode', 'cyberpunk-mode', 'retro-mode');
+    document.documentElement.classList.remove('mc-mode', 'tank-mode', 'vertigo-mode', 'lemon-mode', 'burger-mode', 'thinkpad-mode', 'linux-mode', 'cyberpunk-mode', 'retro-mode', 'error404-mode');
     if (appMode === 'mc') {
       document.documentElement.classList.add('mc-mode', 'dark');
     } else if (appMode === 'tank') {
@@ -175,6 +176,8 @@ export default function App() {
       document.documentElement.classList.add('cyberpunk-mode', 'dark');
     } else if (appMode === 'retro') {
       document.documentElement.classList.add('retro-mode', 'dark');
+    } else if (appMode === 'error404') {
+      document.documentElement.classList.add('error404-mode', 'dark');
     } else {
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -192,6 +195,52 @@ export default function App() {
     exploreRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  if (appMode === 'error404') {
+    return (
+      <div className="min-h-screen selection:bg-red-900/30 font-mono">
+        <AnimatePresence>
+          {isTransitioning && (
+            <motion.div
+              initial={{ scaleY: 0, transformOrigin: 'top' }}
+              animate={{ scaleY: 1 }}
+              exit={{ scaleY: 0, transformOrigin: 'bottom' }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-0 z-[100] bg-indigo-600 dark:bg-indigo-900 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-900 lemon:bg-yellow-400 burger:bg-amber-500 thinkpad:bg-red-900 linux:bg-green-900 cyberpunk:bg-fuchsia-900 retro:bg-purple-900 error404:bg-red-900 pointer-events-none flex items-center justify-center"
+            >
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-white font-display text-4xl font-bold tracking-widest uppercase"
+              >
+                Loading Mode...
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
+          <AlertTriangle className="w-24 h-24 mb-8 animate-pulse text-red-500" />
+          <h1 className="text-6xl font-bold mb-4 text-red-500">ERROR 404</h1>
+          <p className="text-xl mb-8 max-w-md text-red-500">
+            SYSTEM FAILURE. REALITY NOT FOUND. THE SIMULATION HAS CRASHED.
+          </p>
+          <div className="text-sm opacity-70 mb-12 space-y-2 text-red-500">
+            <p>ERR_CODE: 0x00000000</p>
+            <p>MEMORY_DUMP: FAILED</p>
+            <p>REBOOT_SEQUENCE: INITIATED...</p>
+          </div>
+          <button
+            onClick={() => handleModeChange('default')}
+            className="px-6 py-3 border border-red-500 text-red-500 hover:bg-red-500 hover:text-black transition-colors uppercase tracking-widest font-bold"
+          >
+            Restore System
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen selection:bg-indigo-500/30">
       <AnimatePresence>
@@ -201,7 +250,7 @@ export default function App() {
             animate={{ scaleY: 1 }}
             exit={{ scaleY: 0, transformOrigin: 'bottom' }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[100] bg-indigo-600 dark:bg-indigo-900 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-900 lemon:bg-yellow-400 burger:bg-amber-500 thinkpad:bg-red-900 linux:bg-green-900 cyberpunk:bg-fuchsia-900 retro:bg-purple-900 pointer-events-none flex items-center justify-center"
+            className="fixed inset-0 z-[100] bg-indigo-600 dark:bg-indigo-900 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-900 lemon:bg-yellow-400 burger:bg-amber-500 thinkpad:bg-red-900 linux:bg-green-900 cyberpunk:bg-fuchsia-900 retro:bg-purple-900 error404:bg-red-900 pointer-events-none flex items-center justify-center"
           >
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -223,7 +272,7 @@ export default function App() {
             <div className="relative group flex items-center justify-center">
               <button
                 onClick={() => setIsModeMenuOpen(!isModeMenuOpen)}
-                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20 lemon:bg-yellow-200 lemon:border-yellow-400 burger:bg-amber-100 burger:border-amber-300 thinkpad:bg-black thinkpad:border-red-600 linux:bg-black linux:border-green-500 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : appMode === 'lemon' ? 'text-yellow-600 border-yellow-400' : appMode === 'burger' ? 'text-amber-800 border-amber-400' : appMode === 'thinkpad' ? 'text-red-500 border-red-600' : appMode === 'linux' ? 'text-green-500 border-green-500' : appMode === 'cyberpunk' ? 'text-fuchsia-500 border-fuchsia-500' : appMode === 'retro' ? 'text-purple-400 border-purple-500' : 'text-gray-500 dark:text-gray-400'} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500`}
+                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20 lemon:bg-yellow-200 lemon:border-yellow-400 burger:bg-amber-100 burger:border-amber-300 thinkpad:bg-black thinkpad:border-red-600 linux:bg-black linux:border-green-500 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500 error404:bg-red-900/20 error404:border-red-500' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : appMode === 'lemon' ? 'text-yellow-600 border-yellow-400' : appMode === 'burger' ? 'text-amber-800 border-amber-400' : appMode === 'thinkpad' ? 'text-red-500 border-red-600' : appMode === 'linux' ? 'text-green-500 border-green-500' : appMode === 'cyberpunk' ? 'text-fuchsia-500 border-fuchsia-500' : appMode === 'retro' ? 'text-purple-400 border-purple-500' : appMode === 'error404' ? 'text-red-500 border-red-500' : 'text-gray-500 dark:text-gray-400'} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 error404:focus-visible:ring-red-500`}
                 aria-label="Select Mode"
                 aria-expanded={isModeMenuOpen}
                 aria-haspopup="menu"
@@ -239,6 +288,7 @@ export default function App() {
                 {appMode === 'linux' && <Terminal className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
                 {appMode === 'cyberpunk' && <Cpu className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
                 {appMode === 'retro' && <Tv className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'error404' && <AlertTriangle className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 text-red-500" aria-hidden="true" />}
               </button>
               
               <AnimatePresence>
@@ -250,7 +300,7 @@ export default function App() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 lemon:bg-yellow-100 lemon:border-yellow-300 burger:bg-amber-50 burger:border-amber-200 thinkpad:bg-[#111] thinkpad:border-red-800 linux:bg-[#0c0c0c] linux:border-green-800 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 p-1"
+                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 lemon:bg-yellow-100 lemon:border-yellow-300 burger:bg-amber-50 burger:border-amber-200 thinkpad:bg-[#111] thinkpad:border-red-800 linux:bg-[#0c0c0c] linux:border-green-800 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500 error404:bg-black error404:border-red-500 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 p-1"
                   >
                     <button 
                       onClick={() => handleModeChange('default')} 
@@ -351,6 +401,16 @@ export default function App() {
                         <Tv className="w-4 h-4" aria-hidden="true" /> Retro VHS
                       </div>
                       {appMode === 'retro' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('error404')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 error404:focus-visible:ring-red-500 ${appMode === 'error404' ? 'bg-red-900/40 text-red-500' : 'hover:bg-gray-50 dark:hover:bg-white/5 retro:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400 error404:text-red-500'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-500" aria-hidden="true" /> <span className="text-red-500">Error 404</span>
+                      </div>
+                      {appMode === 'error404' && <Check className="w-4 h-4 text-red-500" aria-hidden="true" />}
                     </button>
                   </motion.div>
                 )}
@@ -657,11 +717,11 @@ export default function App() {
       </section>
 
       {/* Cool Modes Showcase Section */}
-      <section className="py-24 px-6 relative bg-gray-100/50 dark:bg-[#0a0a0a]/50 mc:bg-black/80 tank:bg-[#0f120b]/80 vertigo:bg-[#020617]/50 cyberpunk:bg-[#0d0221]/90 retro:bg-[#2b2b40]/90 transition-colors duration-200">
+      <section className="py-24 px-6 relative bg-gray-100/50 dark:bg-[#0a0a0a]/50 mc:bg-black/80 tank:bg-[#0f120b]/80 vertigo:bg-[#020617]/50 cyberpunk:bg-[#0d0221]/90 retro:bg-[#2b2b40]/90 error404:bg-black transition-colors duration-200">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-4">Discover Cool Modes</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] cyberpunk:text-fuchsia-200/70 retro:text-purple-200/70 max-w-2xl mx-auto">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] cyberpunk:text-fuchsia-400 retro:text-purple-400 error404:text-red-500 mb-4">Discover Cool Modes</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] cyberpunk:text-fuchsia-200/70 retro:text-purple-200/70 error404:text-red-500/70 max-w-2xl mx-auto">
               Customize your experience with our unique themes. Each mode completely transforms the look and feel of the site. Try them out from the mode switcher in the navbar!
             </p>
           </div>
@@ -674,21 +734,21 @@ export default function App() {
                 <div 
                   key={mode.id}
                   onClick={() => handleModeChange(mode.id as any)}
-                  className={`group cursor-pointer p-6 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl cyberpunk:rounded-none retro:rounded-none border transition-all duration-300 flex flex-col items-center text-center gap-4 ${isActive ? 'bg-white dark:bg-[#161618] mc:bg-black/60 tank:bg-[#1a2315] vertigo:bg-white/10 cyberpunk:bg-[#1a0533] retro:bg-[#363650] shadow-lg scale-105 border-indigo-500 mc:border-green-500 tank:border-[#a3b18a] vertigo:border-cyan-500 lemon:border-yellow-500 burger:border-amber-500 thinkpad:border-red-600 linux:border-green-500 cyberpunk:border-fuchsia-500 retro:border-purple-500' : 'bg-white/50 dark:bg-[#161618]/50 mc:bg-black/40 tank:bg-[#1a2315]/50 vertigo:bg-white/5 cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:bg-[#1a0533] retro:bg-[#363650]/50 retro:border-purple-900/50 retro:hover:bg-[#363650] border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40] vertigo:border-white/10 hover:bg-white dark:hover:bg-[#161618] hover:shadow-md hover:-translate-y-1'}`}
+                  className={`group cursor-pointer p-6 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl cyberpunk:rounded-none retro:rounded-none error404:rounded-none border transition-all duration-300 flex flex-col items-center text-center gap-4 ${isActive ? 'bg-white dark:bg-[#161618] mc:bg-black/60 tank:bg-[#1a2315] vertigo:bg-white/10 cyberpunk:bg-[#1a0533] retro:bg-[#363650] error404:bg-red-900/20 shadow-lg scale-105 border-indigo-500 mc:border-green-500 tank:border-[#a3b18a] vertigo:border-cyan-500 lemon:border-yellow-500 burger:border-amber-500 thinkpad:border-red-600 linux:border-green-500 cyberpunk:border-fuchsia-500 retro:border-purple-500 error404:border-red-500' : 'bg-white/50 dark:bg-[#161618]/50 mc:bg-black/40 tank:bg-[#1a2315]/50 vertigo:bg-white/5 cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:bg-[#1a0533] retro:bg-[#363650]/50 retro:border-purple-900/50 retro:hover:bg-[#363650] error404:bg-black/50 error404:border-red-900/50 error404:hover:bg-red-900/10 border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40] vertigo:border-white/10 hover:bg-white dark:hover:bg-[#161618] hover:shadow-md hover:-translate-y-1'}`}
                 >
-                  <div className={`w-16 h-16 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-full cyberpunk:rounded-none retro:rounded-none flex items-center justify-center ${mode.bg} ${mode.color} ${mode.border} border transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                  <div className={`w-16 h-16 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-full cyberpunk:rounded-none retro:rounded-none error404:rounded-none flex items-center justify-center ${mode.bg} ${mode.color} ${mode.border} border transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                     <Icon className="w-8 h-8" />
                   </div>
                   <div>
-                    <h3 className={`font-display font-bold text-lg mb-1 ${isActive ? mode.color : 'text-gray-900 dark:text-white tank:text-[#dad7cd] cyberpunk:text-fuchsia-200 retro:text-purple-200'}`}>
+                    <h3 className={`font-display font-bold text-lg mb-1 ${isActive ? mode.color : 'text-gray-900 dark:text-white tank:text-[#dad7cd] cyberpunk:text-fuchsia-200 retro:text-purple-200 error404:text-red-500'}`}>
                       {mode.name}
                     </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70 error404:text-red-500/70">
                       {mode.desc}
                     </p>
                   </div>
                   {isActive && (
-                    <div className={`mt-2 px-3 py-1 rounded-full mc:rounded-none tank:rounded-sm cyberpunk:rounded-none retro:rounded-none text-xs font-medium ${mode.bg} ${mode.color}`}>
+                    <div className={`mt-2 px-3 py-1 rounded-full mc:rounded-none tank:rounded-sm cyberpunk:rounded-none retro:rounded-none error404:rounded-none text-xs font-medium ${mode.bg} ${mode.color}`}>
                       Currently Active
                     </div>
                   )}
