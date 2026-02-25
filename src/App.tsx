@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap, Check } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Sun, Moon, Gamepad2, Shield, Monitor, Github, Youtube, Search, Terminal, Globe, Zap, Check, Laptop, Sparkles, Menu, Cpu, Tv } from 'lucide-react';
 
 const linuxDistros = [
   { name: 'Void Linux', url: 'https://voidlinux.org/download/', description: 'Independent, rolling-release distro with runit init system.' },
@@ -32,6 +32,19 @@ const freeStreaming = [
   { name: 'Anikai', url: 'https://anikai.to/', description: 'Ad-free anime streaming platform.' },
 ];
 
+const coolModesList = [
+  { id: 'default', name: 'Default', icon: Monitor, color: 'text-indigo-500 dark:text-indigo-400', bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', desc: 'Clean, modern, and professional.' },
+  { id: 'mc', name: 'MC Mode', icon: Gamepad2, color: 'text-green-500 dark:text-green-400', bg: 'bg-green-500/10', border: 'border-green-500/20', desc: 'Blocky, nostalgic gaming vibes.' },
+  { id: 'tank', name: 'Tank Mode', icon: Shield, color: 'text-[#588157] dark:text-[#a3b18a]', bg: 'bg-[#588157]/10 dark:bg-[#a3b18a]/10', border: 'border-[#588157]/20 dark:border-[#a3b18a]/20', desc: 'Rugged, military-inspired design.' },
+  { id: 'vertigo', name: 'Vertigo', icon: Zap, color: 'text-cyan-500 dark:text-cyan-400', bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', desc: 'Sleek, blur-heavy, and fast.' },
+  { id: 'lemon', name: 'Lemon', icon: Sparkles, color: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', desc: 'Bright, citrusy, and bubbly.' },
+  { id: 'burger', name: 'Burger', icon: Menu, color: 'text-amber-600 dark:text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20', desc: 'Deliciously warm and chunky.' },
+  { id: 'thinkpad', name: 'Thinkpad', icon: Laptop, color: 'text-red-600 dark:text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20', desc: 'Classic black and red aesthetic.' },
+  { id: 'linux', name: 'Linux', icon: Terminal, color: 'text-green-600 dark:text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/20', desc: 'Pure terminal hacker experience.' },
+  { id: 'cyberpunk', name: 'Cyberpunk', icon: Cpu, color: 'text-fuchsia-500 dark:text-fuchsia-400', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/20', desc: 'Neon lights, dark streets, high tech.' },
+  { id: 'retro', name: 'Retro VHS', icon: Tv, color: 'text-purple-500 dark:text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/20', desc: 'Scanlines, static, and 80s nostalgia.' },
+];
+
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
@@ -44,21 +57,42 @@ const containerVariants = {
   }
 };
 
+const cardClasses = "group p-5 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none border bg-gray-50 dark:bg-[#161618] border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 lemon:rounded-xl lemon:bg-yellow-100/80 lemon:border-yellow-300 lemon:hover:border-yellow-500 lemon:hover:bg-yellow-200/80 burger:rounded-lg burger:bg-amber-50/80 burger:border-amber-200 burger:hover:border-amber-400 burger:hover:bg-amber-100/80 thinkpad:rounded-none thinkpad:bg-[#111] thinkpad:border-red-900/30 thinkpad:hover:border-red-600 thinkpad:hover:bg-[#1a1a1a] linux:rounded-none linux:bg-[#0c0c0c] linux:border-green-900/30 linux:hover:border-green-500 linux:hover:bg-[#111] cyberpunk:rounded-none cyberpunk:bg-[#0d0221]/80 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:border-fuchsia-500 cyberpunk:hover:bg-[#1a0533]/80 cyberpunk:backdrop-blur-sm retro:rounded-none retro:bg-[#2b2b40]/80 retro:border-purple-900/50 retro:hover:border-purple-500 retro:hover:bg-[#363650]/80 retro:backdrop-blur-sm";
+const cardTitleClasses = "font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:text-gray-300 thinkpad:group-hover:text-red-500 linux:text-gray-300 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-200 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-200 retro:group-hover:text-purple-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors";
+const cardIconClasses = "w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 lemon:group-hover:text-yellow-600 burger:group-hover:text-amber-600 thinkpad:group-hover:text-red-500 linux:group-hover:text-green-500 cyberpunk:text-fuchsia-700 cyberpunk:group-hover:text-fuchsia-400 retro:text-purple-600 retro:group-hover:text-purple-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors";
+const cardDescClasses = "text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 lemon:text-yellow-800 burger:text-amber-800 thinkpad:text-gray-500 linux:text-gray-500 cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70 leading-relaxed";
+
 const getItemVariants = (mode: string) => ({
-  hidden: { opacity: 0, y: 15 },
-  show: { opacity: 1, y: 0, transition: mode === 'vertigo' ? { duration: 0.5, ease: [0.05, 0.9, 0.1, 1.05] } : { type: "spring", stiffness: 300, damping: 24 } },
-  exit: { opacity: 0, y: -15, transition: { duration: 0.2 } }
+  hidden: { 
+    opacity: 0, 
+    y: mode === 'vertigo' ? 20 : 15, 
+    scale: mode === 'vertigo' ? 0.95 : 1 
+  },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1, 
+    transition: mode === 'vertigo' 
+      ? { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+      : { type: "spring", stiffness: 300, damping: 24 } 
+  },
+  exit: { 
+    opacity: 0, 
+    y: mode === 'vertigo' ? -20 : -15, 
+    scale: mode === 'vertigo' ? 0.95 : 1, 
+    transition: { duration: 0.2 } 
+  }
 });
 
 const SkeletonCard = () => (
-  <div className="p-5 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] vertigo:bg-white/5 border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] vertigo:border-white/10 vertigo:backdrop-blur-xl flex flex-col gap-3 animate-pulse">
+  <div className="p-5 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl cyberpunk:rounded-none cyberpunk:bg-[#0d0221]/80 cyberpunk:border-fuchsia-900/50 retro:rounded-none retro:bg-[#2b2b40]/80 retro:border-purple-900/50 bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] vertigo:bg-white/5 border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] vertigo:border-white/10 vertigo:backdrop-blur-xl flex flex-col gap-3 animate-pulse">
     <div className="flex items-center justify-between w-full">
-      <div className="h-5 w-32 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
-      <div className="h-4 w-4 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-full" />
+      <div className="h-5 w-32 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 cyberpunk:bg-fuchsia-900/50 cyberpunk:rounded-none retro:bg-purple-900/50 retro:rounded-none rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
+      <div className="h-4 w-4 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 cyberpunk:bg-fuchsia-900/50 cyberpunk:rounded-none retro:bg-purple-900/50 retro:rounded-none rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-full" />
     </div>
     <div className="space-y-2">
-      <div className="h-3 w-full bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
-      <div className="h-3 w-2/3 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
+      <div className="h-3 w-full bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 cyberpunk:bg-fuchsia-900/50 cyberpunk:rounded-none retro:bg-purple-900/50 retro:rounded-none rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
+      <div className="h-3 w-2/3 bg-gray-200 dark:bg-white/10 mc:bg-white/20 tank:bg-[#3a5a40] vertigo:bg-white/20 cyberpunk:bg-fuchsia-900/50 cyberpunk:rounded-none retro:bg-purple-900/50 retro:rounded-none rounded-md mc:rounded-none tank:rounded-sm vertigo:rounded-lg" />
     </div>
   </div>
 );
@@ -79,7 +113,7 @@ export default function App() {
     }
     return 'dark';
   });
-  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank' | 'vertigo'>(() => {
+  const [appMode, setAppMode] = useState<'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('appMode') as any) || 'default';
     }
@@ -90,7 +124,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
 
-  const handleModeChange = (newMode: 'default' | 'mc' | 'tank' | 'vertigo') => {
+  const handleModeChange = (newMode: 'default' | 'mc' | 'tank' | 'vertigo' | 'lemon' | 'burger' | 'thinkpad' | 'linux' | 'cyberpunk' | 'retro') => {
     if (newMode === appMode) {
       setIsModeMenuOpen(false);
       return;
@@ -98,12 +132,13 @@ export default function App() {
     setIsTransitioning(true);
     setIsModeMenuOpen(false);
     
+    // Screen-wide wipe effect
     setTimeout(() => {
       setAppMode(newMode);
       setTimeout(() => {
         setIsTransitioning(false);
-      }, 50);
-    }, 400);
+      }, 300); // Wait for the wipe to cover the screen before revealing
+    }, 500); // Start changing mode after the wipe starts
   };
 
   useEffect(() => {
@@ -121,13 +156,25 @@ export default function App() {
   }, [activeTab]);
 
   useEffect(() => {
-    document.documentElement.classList.remove('mc-mode', 'tank-mode', 'vertigo-mode');
+    document.documentElement.classList.remove('mc-mode', 'tank-mode', 'vertigo-mode', 'lemon-mode', 'burger-mode', 'thinkpad-mode', 'linux-mode', 'cyberpunk-mode', 'retro-mode');
     if (appMode === 'mc') {
       document.documentElement.classList.add('mc-mode', 'dark');
     } else if (appMode === 'tank') {
       document.documentElement.classList.add('tank-mode', 'dark');
     } else if (appMode === 'vertigo') {
       document.documentElement.classList.add('vertigo-mode', 'dark');
+    } else if (appMode === 'lemon') {
+      document.documentElement.classList.add('lemon-mode');
+    } else if (appMode === 'burger') {
+      document.documentElement.classList.add('burger-mode');
+    } else if (appMode === 'thinkpad') {
+      document.documentElement.classList.add('thinkpad-mode', 'dark');
+    } else if (appMode === 'linux') {
+      document.documentElement.classList.add('linux-mode', 'dark');
+    } else if (appMode === 'cyberpunk') {
+      document.documentElement.classList.add('cyberpunk-mode', 'dark');
+    } else if (appMode === 'retro') {
+      document.documentElement.classList.add('retro-mode', 'dark');
     } else {
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
@@ -150,24 +197,33 @@ export default function App() {
       <AnimatePresence>
         {isTransitioning && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] bg-[#050505] pointer-events-none"
-          />
+            initial={{ scaleY: 0, transformOrigin: 'top' }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0, transformOrigin: 'bottom' }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-[100] bg-indigo-600 dark:bg-indigo-900 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-900 lemon:bg-yellow-400 burger:bg-amber-500 thinkpad:bg-red-900 linux:bg-green-900 cyberpunk:bg-fuchsia-900 retro:bg-purple-900 pointer-events-none flex items-center justify-center"
+          >
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-white font-display text-4xl font-bold tracking-widest uppercase"
+            >
+              Loading Mode...
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 tank:bg-[#11140d]/90 tank:border-[#3a5a40]/50 vertigo:bg-white/5 vertigo:backdrop-blur-2xl vertigo:border-white/10 backdrop-blur-md transition-colors duration-200">
+      <nav className="fixed top-0 w-full z-50 border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#050505]/80 mc:bg-black/40 mc:border-white/10 tank:bg-[#11140d]/90 tank:border-[#3a5a40]/50 vertigo:bg-white/5 vertigo:backdrop-blur-2xl vertigo:border-white/10 cyberpunk:bg-[#0d0221]/80 cyberpunk:border-fuchsia-500/30 retro:bg-[#2b2b40]/90 retro:border-purple-500/30 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium">VCTA's Site</div>
+          <div className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium cyberpunk:text-fuchsia-400 cyberpunk:tracking-widest retro:text-purple-400 retro:tracking-widest">VCTA's Site</div>
           <div className="flex items-center gap-4">
             <div className="relative group flex items-center justify-center">
               <button
                 onClick={() => setIsModeMenuOpen(!isModeMenuOpen)}
-                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : 'text-gray-500 dark:text-gray-400'} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500`}
+                className={`p-2 transition-colors rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-2xl ${appMode !== 'default' ? 'bg-black/40 border vertigo:bg-white/10 vertigo:border-white/20 lemon:bg-yellow-200 lemon:border-yellow-400 burger:bg-amber-100 burger:border-amber-300 thinkpad:bg-black thinkpad:border-red-600 linux:bg-black linux:border-green-500 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500' : 'hover:bg-gray-100 dark:hover:bg-white/5'} ${appMode === 'mc' ? 'text-green-400 border-green-500/30' : appMode === 'tank' ? 'text-[#a3b18a] border-[#3a5a40]' : appMode === 'vertigo' ? 'text-cyan-400 border-cyan-500/30' : appMode === 'lemon' ? 'text-yellow-600 border-yellow-400' : appMode === 'burger' ? 'text-amber-800 border-amber-400' : appMode === 'thinkpad' ? 'text-red-500 border-red-600' : appMode === 'linux' ? 'text-green-500 border-green-500' : appMode === 'cyberpunk' ? 'text-fuchsia-500 border-fuchsia-500' : appMode === 'retro' ? 'text-purple-400 border-purple-500' : 'text-gray-500 dark:text-gray-400'} focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500`}
                 aria-label="Select Mode"
                 aria-expanded={isModeMenuOpen}
                 aria-haspopup="menu"
@@ -177,6 +233,12 @@ export default function App() {
                 {appMode === 'mc' && <Gamepad2 className="w-5 h-5 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6" aria-hidden="true" />}
                 {appMode === 'tank' && <Shield className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
                 {appMode === 'vertigo' && <Zap className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'lemon' && <Sparkles className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'burger' && <Menu className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'thinkpad' && <Laptop className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'linux' && <Terminal className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'cyberpunk' && <Cpu className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
+                {appMode === 'retro' && <Tv className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />}
               </button>
               
               <AnimatePresence>
@@ -188,12 +250,12 @@ export default function App() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 p-1"
+                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-[#161618] mc:bg-black mc:border mc:border-green-500/50 tank:bg-[#1a2315] tank:border tank:border-[#3a5a40] vertigo:bg-[#0f172a]/90 vertigo:backdrop-blur-xl vertigo:border vertigo:border-white/20 lemon:bg-yellow-100 lemon:border-yellow-300 burger:bg-amber-50 burger:border-amber-200 thinkpad:bg-[#111] thinkpad:border-red-800 linux:bg-[#0c0c0c] linux:border-green-800 cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500 retro:bg-[#2b2b40] retro:border-purple-500 border border-gray-200 dark:border-white/10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 p-1"
                   >
                     <button 
                       onClick={() => handleModeChange('default')} 
                       role="menuitem"
-                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'default' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'default' ? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white' : 'hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Monitor className="w-4 h-4" aria-hidden="true" /> Default
@@ -203,7 +265,7 @@ export default function App() {
                     <button 
                       onClick={() => handleModeChange('mc')} 
                       role="menuitem"
-                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'mc' ? 'bg-green-900/40 text-green-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 mc:hover:bg-green-900/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'mc' ? 'bg-green-900/40 text-green-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 mc:hover:bg-green-900/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Gamepad2 className="w-4 h-4" aria-hidden="true" /> MC Mode
@@ -213,7 +275,7 @@ export default function App() {
                     <button 
                       onClick={() => handleModeChange('tank')} 
                       role="menuitem"
-                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'tank' ? 'bg-[#3a5a40]/40 text-[#dad7cd]' : 'hover:bg-gray-50 dark:hover:bg-white/5 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'tank' ? 'bg-[#3a5a40]/40 text-[#dad7cd]' : 'hover:bg-gray-50 dark:hover:bg-white/5 tank:hover:bg-[#3a5a40]/30 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Shield className="w-4 h-4" aria-hidden="true" /> Tank Mode
@@ -223,12 +285,72 @@ export default function App() {
                     <button 
                       onClick={() => handleModeChange('vertigo')} 
                       role="menuitem"
-                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${appMode === 'vertigo' ? 'bg-cyan-900/40 text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400'}`}
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'vertigo' ? 'bg-cyan-900/40 text-cyan-300' : 'hover:bg-gray-50 dark:hover:bg-white/5 vertigo:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
                     >
                       <div className="flex items-center gap-2">
                         <Zap className="w-4 h-4" aria-hidden="true" /> Vertigo Mode
                       </div>
                       {appMode === 'vertigo' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('lemon')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'lemon' ? 'bg-yellow-300 text-yellow-900' : 'hover:bg-gray-50 dark:hover:bg-white/5 lemon:hover:bg-yellow-200 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" aria-hidden="true" /> Lemon Mode
+                      </div>
+                      {appMode === 'lemon' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('burger')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'burger' ? 'bg-amber-300 text-amber-900' : 'hover:bg-gray-50 dark:hover:bg-white/5 burger:hover:bg-amber-200 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Menu className="w-4 h-4" aria-hidden="true" /> Burger Mode
+                      </div>
+                      {appMode === 'burger' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('thinkpad')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'thinkpad' ? 'bg-red-900/40 text-red-500' : 'hover:bg-gray-50 dark:hover:bg-white/5 thinkpad:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Laptop className="w-4 h-4" aria-hidden="true" /> Thinkpad Mode
+                      </div>
+                      {appMode === 'thinkpad' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('linux')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'linux' ? 'bg-green-900/40 text-green-400' : 'hover:bg-gray-50 dark:hover:bg-white/5 linux:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Terminal className="w-4 h-4" aria-hidden="true" /> Linux Mode
+                      </div>
+                      {appMode === 'linux' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('cyberpunk')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'cyberpunk' ? 'bg-fuchsia-900/40 text-fuchsia-400' : 'hover:bg-gray-50 dark:hover:bg-white/5 cyberpunk:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Cpu className="w-4 h-4" aria-hidden="true" /> Cyberpunk
+                      </div>
+                      {appMode === 'cyberpunk' && <Check className="w-4 h-4" aria-hidden="true" />}
+                    </button>
+                    <button 
+                      onClick={() => handleModeChange('retro')} 
+                      role="menuitem"
+                      className={`px-3 py-2 text-left text-sm rounded-lg mc:rounded-none tank:rounded-sm vertigo:rounded-xl flex items-center justify-between gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:focus-visible:ring-fuchsia-500 retro:focus-visible:ring-purple-500 ${appMode === 'retro' ? 'bg-purple-900/40 text-purple-400' : 'hover:bg-gray-50 dark:hover:bg-white/5 retro:hover:bg-white/10 text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] vertigo:text-cyan-400 lemon:text-yellow-700 burger:text-amber-800 thinkpad:text-white linux:text-green-500 cyberpunk:text-fuchsia-500 retro:text-purple-400'}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Tv className="w-4 h-4" aria-hidden="true" /> Retro VHS
+                      </div>
+                      {appMode === 'retro' && <Check className="w-4 h-4" aria-hidden="true" />}
                     </button>
                   </motion.div>
                 )}
@@ -264,27 +386,27 @@ export default function App() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-6 min-h-[80vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.15)_0%,transparent_50%)] mc:hidden tank:hidden pointer-events-none transition-colors duration-200" />
+        <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.1)_0%,transparent_50%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.15)_0%,transparent_50%)] mc:hidden tank:hidden cyberpunk:hidden retro:hidden pointer-events-none transition-colors duration-200" />
         
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center max-w-3xl mx-auto relative z-10 mc:bg-black/40 mc:p-8 mc:border mc:border-white/10 mc:backdrop-blur-sm tank:bg-[#11140d]/80 tank:p-10 tank:border-2 tank:border-[#3a5a40] tank:backdrop-blur-md tank:shadow-[0_0_50px_rgba(58,90,64,0.3)]"
+          className="text-center max-w-3xl mx-auto relative z-10 mc:bg-black/40 mc:p-8 mc:border mc:border-white/10 mc:backdrop-blur-sm tank:bg-[#11140d]/80 tank:p-10 tank:border-2 tank:border-[#3a5a40] tank:backdrop-blur-md tank:shadow-[0_0_50px_rgba(58,90,64,0.3)] cyberpunk:bg-[#0d0221]/60 cyberpunk:p-8 cyberpunk:border cyberpunk:border-fuchsia-500/30 cyberpunk:backdrop-blur-md retro:bg-[#2b2b40]/80 retro:p-8 retro:border retro:border-purple-500/30 retro:backdrop-blur-md"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mc:rounded-none mc:bg-black/60 mc:border-green-500/50 mc:text-green-400 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#588157] tank:text-[#a3b18a] tank:uppercase tank:tracking-widest bg-indigo-50 dark:bg-white/5 border border-indigo-100 dark:border-white/10 text-sm font-medium mb-8 text-indigo-600 dark:text-indigo-300 transition-colors duration-200">
-            <span className="w-2 h-2 rounded-full mc:rounded-none mc:bg-green-500 tank:rounded-none tank:bg-[#a3b18a] bg-indigo-500 animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mc:rounded-none mc:bg-black/60 mc:border-green-500/50 mc:text-green-400 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#588157] tank:text-[#a3b18a] tank:uppercase tank:tracking-widest cyberpunk:rounded-none cyberpunk:bg-fuchsia-900/30 cyberpunk:border-fuchsia-500/50 cyberpunk:text-fuchsia-400 retro:rounded-none retro:bg-purple-900/30 retro:border-purple-500/50 retro:text-purple-400 bg-indigo-50 dark:bg-white/5 border border-indigo-100 dark:border-white/10 text-sm font-medium mb-8 text-indigo-600 dark:text-indigo-300 transition-colors duration-200">
+            <span className="w-2 h-2 rounded-full mc:rounded-none mc:bg-green-500 tank:rounded-none tank:bg-[#a3b18a] cyberpunk:rounded-none cyberpunk:bg-fuchsia-500 retro:rounded-none retro:bg-purple-500 bg-indigo-500 animate-pulse" />
             Tech, Community & Hangout
           </div>
           
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight text-gray-900 dark:text-white transition-colors duration-200">
             Welcome to <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400 mc:from-green-400 mc:to-emerald-500 tank:from-[#a3b18a] tank:to-[#dad7cd] tank:uppercase tank:tracking-wider">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500 dark:from-indigo-400 dark:to-cyan-400 mc:from-green-400 mc:to-emerald-500 tank:from-[#a3b18a] tank:to-[#dad7cd] tank:uppercase tank:tracking-wider cyberpunk:from-fuchsia-500 cyberpunk:to-cyan-400 retro:from-purple-400 retro:to-pink-500">
               VCTA's Site
             </span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
+          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] cyberpunk:text-fuchsia-200/70 retro:text-purple-200/70 mb-10 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
             VCTA's Site for everything, discord, resources, cool modes and everything
           </p>
           
@@ -293,14 +415,14 @@ export default function App() {
               href="https://discord.gg/x7a7WcPx6j" 
               target="_blank" 
               rel="noreferrer"
-              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-green-600 mc:hover:bg-green-500 mc:shadow-none tank:rounded-sm tank:bg-[#3a5a40] tank:hover:bg-[#588157] tank:shadow-none tank:border tank:border-[#a3b18a]/30 tank:uppercase tank:tracking-wider bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_-5px_rgba(79,70,229,0.4)]"
+              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-green-600 mc:hover:bg-green-500 mc:shadow-none tank:rounded-sm tank:bg-[#3a5a40] tank:hover:bg-[#588157] tank:shadow-none tank:border tank:border-[#a3b18a]/30 tank:uppercase tank:tracking-wider cyberpunk:rounded-none cyberpunk:bg-fuchsia-600 cyberpunk:hover:bg-fuchsia-500 cyberpunk:shadow-[0_0_30px_-5px_rgba(217,70,239,0.4)] retro:rounded-none retro:bg-purple-600 retro:hover:bg-purple-500 retro:shadow-[0_0_30px_-5px_rgba(168,85,247,0.4)] bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_-5px_rgba(79,70,229,0.3)] dark:shadow-[0_0_30px_-5px_rgba(79,70,229,0.4)]"
             >
               <MessageSquare className="w-5 h-5" />
               Join Discord
             </a>
             <button 
               onClick={scrollToExplore}
-              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-black/60 mc:border-white/20 mc:hover:bg-black/80 tank:rounded-sm tank:bg-[#11140d] tank:border-[#3a5a40] tank:hover:bg-[#1a2315] tank:text-[#a3b18a] tank:uppercase tank:tracking-wider bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 rounded-full mc:rounded-none mc:bg-black/60 mc:border-white/20 mc:hover:bg-black/80 tank:rounded-sm tank:bg-[#11140d] tank:border-[#3a5a40] tank:hover:bg-[#1a2315] tank:text-[#a3b18a] tank:uppercase tank:tracking-wider cyberpunk:rounded-none cyberpunk:bg-[#0d0221] cyberpunk:border-fuchsia-500/50 cyberpunk:hover:bg-[#1a0533] cyberpunk:text-fuchsia-400 retro:rounded-none retro:bg-[#2b2b40] retro:border-purple-500/50 retro:hover:bg-[#363650] retro:text-purple-400 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium transition-all flex items-center justify-center gap-2"
             >
               Explore Resources
               <ChevronRight className="w-5 h-5" />
@@ -312,14 +434,14 @@ export default function App() {
       {/* Explore Section */}
       <section ref={exploreRef} className="py-24 px-6 relative">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none tank:bg-[#11140d]/90 tank:backdrop-blur-lg tank:border-2 tank:border-[#3a5a40] tank:rounded-sm rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 transition-colors duration-200">
+          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none tank:bg-[#11140d]/90 tank:backdrop-blur-lg tank:border-2 tank:border-[#3a5a40] tank:rounded-sm rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 cyberpunk:bg-[#0d0221]/80 cyberpunk:backdrop-blur-md cyberpunk:border-fuchsia-500/30 cyberpunk:rounded-none retro:bg-[#2b2b40]/90 retro:backdrop-blur-md retro:border-purple-500/30 retro:rounded-none transition-colors duration-200">
             {/* Header */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
               <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd]">Downloads & Resources</h2>
               
               {/* Pill Toggle */}
               <div 
-                className="inline-flex flex-wrap justify-center p-1.5 bg-gray-100 dark:bg-[#050505] mc:bg-black/40 mc:border-white/10 mc:rounded-none tank:bg-[#1a2315] tank:border-[#3a5a40] tank:rounded-sm rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 transition-colors duration-200 gap-1 relative"
+                className="inline-flex flex-wrap justify-center p-1.5 bg-gray-100 dark:bg-[#050505] mc:bg-black/40 mc:border-white/10 mc:rounded-none tank:bg-[#1a2315] tank:border-[#3a5a40] tank:rounded-sm rounded-3xl md:rounded-full border border-gray-200 dark:border-white/5 cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-500/20 cyberpunk:rounded-none retro:bg-[#363650]/50 retro:border-purple-500/20 retro:rounded-none transition-colors duration-200 gap-1 relative"
                 role="tablist"
                 aria-label="Resource Categories"
               >
@@ -337,16 +459,16 @@ export default function App() {
                     aria-controls={`panel-${tab.id}`}
                     id={`tab-${tab.id}`}
                     tabIndex={activeTab === tab.id ? 0 : -1}
-                    className={`relative px-6 py-2.5 rounded-full mc:rounded-none tank:rounded-sm tank:uppercase tank:tracking-wider text-sm font-medium transition-colors duration-200 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 ${
+                    className={`relative px-6 py-2.5 rounded-full mc:rounded-none tank:rounded-sm tank:uppercase tank:tracking-wider text-sm font-medium transition-colors duration-200 z-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 mc:focus-visible:ring-green-500 tank:focus-visible:ring-[#a3b18a] vertigo:focus-visible:ring-cyan-500 cyberpunk:rounded-none cyberpunk:focus-visible:ring-fuchsia-500 retro:rounded-none retro:focus-visible:ring-purple-500 ${
                       activeTab === tab.id 
                         ? 'text-white tank:text-[#11140d]' 
-                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-white/5 mc:hover:bg-white/10 tank:hover:bg-[#3a5a40]/40 tank:text-[#8a9a70]'
+                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/50 dark:hover:bg-white/5 mc:hover:bg-white/10 tank:hover:bg-[#3a5a40]/40 tank:text-[#8a9a70] cyberpunk:hover:bg-fuchsia-900/30 cyberpunk:text-fuchsia-500/70 retro:hover:bg-purple-900/30 retro:text-purple-500/70'
                     }`}
                   >
                     {activeTab === tab.id && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-indigo-600 mc:bg-green-600 tank:bg-[#a3b18a] rounded-full mc:rounded-none tank:rounded-sm shadow-md -z-10"
+                        className="absolute inset-0 bg-indigo-600 mc:bg-green-600 tank:bg-[#a3b18a] cyberpunk:bg-fuchsia-600 cyberpunk:rounded-none retro:bg-purple-600 retro:rounded-none rounded-full mc:rounded-none tank:rounded-sm shadow-md -z-10"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -392,15 +514,15 @@ export default function App() {
                         href={distro.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className={cardClasses}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className={cardTitleClasses}>
                             {distro.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className={cardIconClasses} />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
+                        <p className={cardDescClasses}>
                           {distro.description}
                         </p>
                       </motion.a>
@@ -427,15 +549,15 @@ export default function App() {
                         href={iso.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className={cardClasses}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className={cardTitleClasses}>
                             {iso.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className={cardIconClasses} />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
+                        <p className={cardDescClasses}>
                           {iso.description}
                         </p>
                       </motion.a>
@@ -462,15 +584,15 @@ export default function App() {
                         href={game.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className={cardClasses}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className={cardTitleClasses}>
                             {game.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className={cardIconClasses} />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
+                        <p className={cardDescClasses}>
                           {game.description}
                         </p>
                       </motion.a>
@@ -497,15 +619,15 @@ export default function App() {
                         href={site.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="group p-5 rounded-2xl mc:rounded-none mc:bg-black/40 mc:border-white/10 mc:hover:border-green-500/50 tank:rounded-sm tank:bg-[#1a2315] tank:border-[#3a5a40] tank:hover:border-[#a3b18a] tank:hover:bg-[#232f1c] vertigo:rounded-3xl vertigo:bg-white/5 vertigo:border-white/10 vertigo:backdrop-blur-xl vertigo:hover:border-cyan-500/50 bg-gray-50 dark:bg-[#161618] border border-gray-200 dark:border-white/5 hover:border-indigo-500/30 dark:hover:border-indigo-500/30 transition-all flex flex-col gap-2 shadow-sm hover:shadow-md dark:shadow-none"
+                        className={cardClasses}
                       >
                         <div className="flex items-center justify-between w-full">
-                          <span className="font-medium text-gray-900 dark:text-gray-100 mc:group-hover:text-green-400 tank:text-[#dad7cd] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-white transition-colors">
+                          <span className={cardTitleClasses}>
                             {site.name}
                           </span>
-                          <Download className="w-4 h-4 text-gray-400 dark:text-gray-500 mc:group-hover:text-green-400 tank:text-[#588157] tank:group-hover:text-[#a3b18a] vertigo:group-hover:text-cyan-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+                          <Download className={cardIconClasses} />
                         </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] vertigo:text-gray-400 leading-relaxed">
+                        <p className={cardDescClasses}>
                           {site.description}
                         </p>
                       </motion.a>
@@ -534,29 +656,72 @@ export default function App() {
         </div>
       </section>
 
+      {/* Cool Modes Showcase Section */}
+      <section className="py-24 px-6 relative bg-gray-100/50 dark:bg-[#0a0a0a]/50 mc:bg-black/80 tank:bg-[#0f120b]/80 vertigo:bg-[#020617]/50 cyberpunk:bg-[#0d0221]/90 retro:bg-[#2b2b40]/90 transition-colors duration-200">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-4">Discover Cool Modes</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400 mc:text-gray-300 tank:text-[#8a9a70] cyberpunk:text-fuchsia-200/70 retro:text-purple-200/70 max-w-2xl mx-auto">
+              Customize your experience with our unique themes. Each mode completely transforms the look and feel of the site. Try them out from the mode switcher in the navbar!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {coolModesList.map((mode) => {
+              const Icon = mode.icon;
+              const isActive = appMode === mode.id;
+              return (
+                <div 
+                  key={mode.id}
+                  onClick={() => handleModeChange(mode.id as any)}
+                  className={`group cursor-pointer p-6 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-3xl cyberpunk:rounded-none retro:rounded-none border transition-all duration-300 flex flex-col items-center text-center gap-4 ${isActive ? 'bg-white dark:bg-[#161618] mc:bg-black/60 tank:bg-[#1a2315] vertigo:bg-white/10 cyberpunk:bg-[#1a0533] retro:bg-[#363650] shadow-lg scale-105 border-indigo-500 mc:border-green-500 tank:border-[#a3b18a] vertigo:border-cyan-500 lemon:border-yellow-500 burger:border-amber-500 thinkpad:border-red-600 linux:border-green-500 cyberpunk:border-fuchsia-500 retro:border-purple-500' : 'bg-white/50 dark:bg-[#161618]/50 mc:bg-black/40 tank:bg-[#1a2315]/50 vertigo:bg-white/5 cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:hover:bg-[#1a0533] retro:bg-[#363650]/50 retro:border-purple-900/50 retro:hover:bg-[#363650] border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40] vertigo:border-white/10 hover:bg-white dark:hover:bg-[#161618] hover:shadow-md hover:-translate-y-1'}`}
+                >
+                  <div className={`w-16 h-16 rounded-2xl mc:rounded-none tank:rounded-sm vertigo:rounded-full cyberpunk:rounded-none retro:rounded-none flex items-center justify-center ${mode.bg} ${mode.color} ${mode.border} border transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                    <Icon className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className={`font-display font-bold text-lg mb-1 ${isActive ? mode.color : 'text-gray-900 dark:text-white tank:text-[#dad7cd] cyberpunk:text-fuchsia-200 retro:text-purple-200'}`}>
+                      {mode.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mc:text-gray-400 tank:text-[#8a9a70] cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70">
+                      {mode.desc}
+                    </p>
+                  </div>
+                  {isActive && (
+                    <div className={`mt-2 px-3 py-1 rounded-full mc:rounded-none tank:rounded-sm cyberpunk:rounded-none retro:rounded-none text-xs font-medium ${mode.bg} ${mode.color}`}>
+                      Currently Active
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Support Section */}
       <section className="py-24 px-6 relative">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none tank:bg-[#11140d]/90 tank:backdrop-blur-lg tank:border-2 tank:border-[#3a5a40] tank:rounded-sm rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 transition-colors duration-200">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] mb-8 text-center">Contact Support</h2>
+          <div className="bg-white dark:bg-[#0f0f11] mc:bg-black/60 mc:backdrop-blur-md mc:border-white/10 mc:rounded-none tank:bg-[#11140d]/90 tank:backdrop-blur-lg tank:border-2 tank:border-[#3a5a40] tank:rounded-sm rounded-[2rem] p-8 md:p-12 shadow-xl dark:shadow-none border border-gray-200 dark:border-white/5 cyberpunk:bg-[#0d0221]/80 cyberpunk:backdrop-blur-md cyberpunk:border-fuchsia-500/30 cyberpunk:rounded-none retro:bg-[#2b2b40]/90 retro:backdrop-blur-md retro:border-purple-500/30 retro:rounded-none transition-colors duration-200">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tank:uppercase tank:tracking-wider tank:text-[#dad7cd] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-8 text-center">Contact Support</h2>
             <form action="https://formsubmit.co/alphakoko23@gmail.com" method="POST" className="flex flex-col gap-5">
               <input type="hidden" name="_subject" value="New Support Request from VCTA's Site!" />
               <input type="hidden" name="_captcha" value="false" />
               <input type="hidden" name="_template" value="table" />
               
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Name</label>
-                <input type="text" name="name" id="name" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all" placeholder="Your Name" />
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-2">Name</label>
+                <input type="text" name="name" id="name" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 cyberpunk:rounded-none cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:focus:border-fuchsia-500 cyberpunk:focus:ring-fuchsia-500/20 cyberpunk:text-fuchsia-200 retro:rounded-none retro:bg-[#363650]/50 retro:border-purple-900/50 retro:focus:border-purple-500 retro:focus:ring-purple-500/20 retro:text-purple-200 text-gray-900 dark:text-white outline-none transition-all" placeholder="Your Name" />
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Email</label>
-                <input type="email" name="email" id="email" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all" placeholder="your@email.com" />
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-2">Email</label>
+                <input type="email" name="email" id="email" required className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 cyberpunk:rounded-none cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:focus:border-fuchsia-500 cyberpunk:focus:ring-fuchsia-500/20 cyberpunk:text-fuchsia-200 retro:rounded-none retro:bg-[#363650]/50 retro:border-purple-900/50 retro:focus:border-purple-500 retro:focus:ring-purple-500/20 retro:text-purple-200 text-gray-900 dark:text-white outline-none transition-all" placeholder="your@email.com" />
               </div>
               <div>
-                <label htmlFor="problem" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] mb-2">Problem</label>
-                <textarea name="problem" id="problem" required rows={4} className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 text-gray-900 dark:text-white outline-none transition-all resize-none" placeholder="Describe your problem here..."></textarea>
+                <label htmlFor="problem" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mc:text-green-400 tank:text-[#a3b18a] cyberpunk:text-fuchsia-400 retro:text-purple-400 mb-2">Problem</label>
+                <textarea name="problem" id="problem" required rows={4} className="w-full px-4 py-3 rounded-xl mc:rounded-none tank:rounded-sm bg-gray-50 dark:bg-[#161618] mc:bg-black/40 tank:bg-[#1a2315] border border-gray-200 dark:border-white/5 mc:border-white/20 tank:border-[#3a5a40] focus:border-indigo-500 dark:focus:border-indigo-500 mc:focus:border-green-500 tank:focus:border-[#a3b18a] focus:ring-2 focus:ring-indigo-500/20 mc:focus:ring-green-500/20 tank:focus:ring-[#a3b18a]/20 cyberpunk:rounded-none cyberpunk:bg-[#1a0533]/50 cyberpunk:border-fuchsia-900/50 cyberpunk:focus:border-fuchsia-500 cyberpunk:focus:ring-fuchsia-500/20 cyberpunk:text-fuchsia-200 retro:rounded-none retro:bg-[#363650]/50 retro:border-purple-900/50 retro:focus:border-purple-500 retro:focus:ring-purple-500/20 retro:text-purple-200 text-gray-900 dark:text-white outline-none transition-all resize-none" placeholder="Describe your problem here..."></textarea>
               </div>
-              <button type="submit" className="mt-4 w-full py-4 rounded-xl mc:rounded-none tank:rounded-sm bg-indigo-600 hover:bg-indigo-500 mc:bg-green-600 mc:hover:bg-green-500 tank:bg-[#3a5a40] tank:hover:bg-[#588157] text-white font-medium transition-all shadow-md tank:uppercase tank:tracking-wider">
+              <button type="submit" className="mt-4 w-full py-4 rounded-xl mc:rounded-none tank:rounded-sm bg-indigo-600 hover:bg-indigo-500 mc:bg-green-600 mc:hover:bg-green-500 tank:bg-[#3a5a40] tank:hover:bg-[#588157] cyberpunk:rounded-none cyberpunk:bg-fuchsia-600 cyberpunk:hover:bg-fuchsia-500 retro:rounded-none retro:bg-purple-600 retro:hover:bg-purple-500 text-white font-medium transition-all shadow-md tank:uppercase tank:tracking-wider">
                 Send Support Request
               </button>
             </form>
@@ -565,30 +730,30 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40]/50 vertigo:border-white/10 bg-white/50 dark:bg-[#050505]/50 mc:bg-black/60 tank:bg-[#11140d]/80 vertigo:bg-white/5 backdrop-blur-md transition-colors duration-200">
+      <footer className="py-12 border-t border-gray-200 dark:border-white/5 mc:border-white/10 tank:border-[#3a5a40]/50 vertigo:border-white/10 cyberpunk:border-fuchsia-500/30 cyberpunk:bg-[#0d0221]/80 retro:border-purple-500/30 retro:bg-[#2b2b40]/90 bg-white/50 dark:bg-[#050505]/50 mc:bg-black/60 tank:bg-[#11140d]/80 vertigo:bg-white/5 backdrop-blur-md transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-6 flex flex-col items-center justify-center gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl bg-indigo-600 dark:bg-indigo-500 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 mc:shadow-green-500/20 tank:shadow-[#3a5a40]/20 vertigo:shadow-cyan-500/20">
+            <div className="w-10 h-10 rounded-xl mc:rounded-none tank:rounded-sm vertigo:rounded-2xl cyberpunk:rounded-none cyberpunk:bg-fuchsia-600 cyberpunk:shadow-fuchsia-500/20 retro:rounded-none retro:bg-purple-600 retro:shadow-purple-500/20 bg-indigo-600 dark:bg-indigo-500 mc:bg-green-600 tank:bg-[#3a5a40] vertigo:bg-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 mc:shadow-green-500/20 tank:shadow-[#3a5a40]/20 vertigo:shadow-cyan-500/20">
               <span className="font-display font-bold text-white text-xl tracking-tighter">V</span>
             </div>
-            <span className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium">VCTA's Site</span>
+            <span className="font-display font-bold text-xl tracking-tight text-gray-900 dark:text-white mc:text-2xl tank:text-2xl tank:uppercase tank:tracking-widest tank:text-[#dad7cd] vertigo:text-2xl vertigo:tracking-tighter vertigo:font-medium cyberpunk:text-fuchsia-400 cyberpunk:tracking-widest retro:text-purple-400 retro:tracking-widest">VCTA's Site</span>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 mc:text-green-500/70 tank:text-[#a3b18a]/70 vertigo:text-cyan-100/50 text-sm text-center max-w-md">
+          <p className="text-gray-500 dark:text-gray-400 mc:text-green-500/70 tank:text-[#a3b18a]/70 vertigo:text-cyan-100/50 cyberpunk:text-fuchsia-400/70 retro:text-purple-400/70 text-sm text-center max-w-md">
             The ultimate community for everything tech, hanging out, and everything in between.
           </p>
           <div className="flex items-center gap-4 mt-2">
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+            <a href="https://github.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl cyberpunk:rounded-none cyberpunk:hover:text-fuchsia-400 cyberpunk:hover:bg-fuchsia-900/30 retro:rounded-none retro:hover:text-purple-400 retro:hover:bg-purple-900/30 text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
               <Github className="w-5 h-5" />
             </a>
-            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl cyberpunk:rounded-none cyberpunk:hover:text-fuchsia-400 cyberpunk:hover:bg-fuchsia-900/30 retro:rounded-none retro:hover:text-purple-400 retro:hover:bg-purple-900/30 text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
               <Youtube className="w-5 h-5" />
             </a>
-            <a href="https://discord.gg/x7a7WcPx6j" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
+            <a href="https://discord.gg/x7a7WcPx6j" target="_blank" rel="noreferrer" className="p-2 rounded-full mc:rounded-none tank:rounded-sm vertigo:rounded-xl cyberpunk:rounded-none cyberpunk:hover:text-fuchsia-400 cyberpunk:hover:bg-fuchsia-900/30 retro:rounded-none retro:hover:text-purple-400 retro:hover:bg-purple-900/30 text-gray-400 hover:text-gray-900 dark:hover:text-white mc:hover:text-green-400 tank:hover:text-[#dad7cd] vertigo:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-white/5 mc:hover:bg-green-900/30 tank:hover:bg-[#3a5a40]/30 vertigo:hover:bg-white/10 transition-all">
               <MessageSquare className="w-5 h-5" />
             </a>
           </div>
-          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 mc:via-green-500/20 tank:via-[#3a5a40]/50 vertigo:via-cyan-500/20 to-transparent my-2" />
-          <p className="text-gray-400 dark:text-gray-500 mc:text-green-600/50 tank:text-[#588157]/70 vertigo:text-cyan-500/40 text-xs">
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-white/10 mc:via-green-500/20 tank:via-[#3a5a40]/50 vertigo:via-cyan-500/20 cyberpunk:via-fuchsia-500/30 retro:via-purple-500/30 to-transparent my-2" />
+          <p className="text-gray-400 dark:text-gray-500 mc:text-green-600/50 tank:text-[#588157]/70 vertigo:text-cyan-500/40 cyberpunk:text-fuchsia-600/50 retro:text-purple-600/50 text-xs">
             &copy; {new Date().getFullYear()} VCTA's Site. All rights reserved.
           </p>
         </div>
